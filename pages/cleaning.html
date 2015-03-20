@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Data Cleaning | COMP6214</title>
+    <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
+    <!-- Bootstrap 3.3.2 -->
+    <link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <!-- Font Awesome Icons -->
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <!-- Ionicons -->
+    <link href="http://code.ionicframework.com/ionicons/2.0.0/css/ionicons.min.css" rel="stylesheet" type="text/css" />
+    <!-- Theme style -->
+    <link href="../dist/css/AdminLTE.min.css" rel="stylesheet" type="text/css" />
+    <!-- AdminLTE Skins. Choose a skin from the css/skins 
+         folder instead of downloading all of them to reduce the load. -->
+    <link href="../dist/css/skins/_all-skins.min.css" rel="stylesheet" type="text/css" />
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+     <style>
+      body {
+        font-family: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        font-weight: 500;
+      }
+      .content-wrapper {
+        padding: 0 10px;
+        font-size: 14px;
+      }
+      .page-header {
+        border: 0;        
+        margin: 0 0 20px 0;
+        padding: 0;
+        position: relative;
+        z-index: 1;
+        font-size: 30px;
+      }
+      section[id] {
+        padding: 20px 0 0 0;
+      }
+      #components > h3 {
+        font-size: 25px;
+        border-bottom: 1px solid #dedede;
+        color: #000;
+      }
+      #components > h4 {
+        font-size: 20px;
+        color: #000;
+      }
+      .page-header span {
+        z-index: 5;
+        display: inline-block;
+        background-color: #ecf0f5;
+        padding-right: 10px;
+      }
+      .page-header::before {
+        content: " ";
+        display: block;
+        background: #ccc;
+        width: 100%;
+        height: 1px;
+        position: absolute;
+        top: 50%;
+        margin-top: 2px;
+        z-index: -1;
+      }
+      .lead {
+        font-size: 16px;
+        font-weight: 400;
+      }
+      .eg{
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: inline-block;
+        background: #d2d6de;
+        padding: 5px;
+        border-bottom-right-radius: 3px;
+        border-top-left-radius: 3px;
+        border-bottom: 1px solid #d2d6dc;
+        border-right: 1px solid #d2d6dc;
+      }
+      .eg + * {
+        margin-top: 30px;
+      }
+      .content {
+        padding: 10px 25px;
+      }
+      .hierarchy {
+        background: #333;
+        color: #fff;
+      }
+      .plugins-list li {
+        width: 50%;
+        float: left;
+      }
+      pre {
+        border: none;
+      }
+      /* desert scheme ported from vim to google prettify */
+      pre.prettyprint {display: block; background-color: #333; max-height: 300px; border: none!important; margin-bottom: 20px;}
+      pre .nocode { background-color: none; color: #000 }
+      pre .str { color: #ffa0a0;} /* string  - pink */
+      pre .kwd { color: #f0e68c; font-weight: bold }
+      pre .com { color: #87ceeb } /* comment - skyblue */
+      pre .typ { color: #98fb98 } /* type    - lightgreen */
+      pre .lit { color: #cd5c5c } /* literal - darkred */
+      pre .pun { color: #fff }    /* punctuation */
+      pre .pln { color: #fff }    /* plaintext */
+      pre .tag { color: #f0e68c; font-weight: bold } /* html/xml tag    - lightyellow */
+      pre .atn { color: #bdb76b; font-weight: bold } /* attribute name  - khaki */
+      pre .atv { color: #ffa0a0 } /* attribute value - pink */
+      pre .dec { color: #98fb98 } /* decimal         - lightgreen */
+
+      /* Specify class=linenums on a pre to get line numbering */
+      ol.linenums { margin-top: 0; margin-bottom: 0; color: #AEAEAE } /* IE indents via margin-left */
+      li.L0,li.L1,li.L2,li.L3,li.L5,li.L6,li.L7,li.L8 { list-style-type: none }
+      /* Alternate shading for lines */
+      li.L1,li.L3,li.L5,li.L7,li.L9 { }
+
+      @media print {
+        pre.prettyprint { background-color: none }
+        pre .str, code .str { color: #060 }
+        pre .kwd, code .kwd { color: #006; font-weight: bold }
+        pre .com, code .com { color: #600; font-style: italic }
+        pre .typ, code .typ { color: #404; font-weight: bold }
+        pre .lit, code .lit { color: #044 }
+        pre .pun, code .pun { color: #440 }
+        pre .pln, code .pln { color: #000 }
+        pre .tag, code .tag { color: #006; font-weight: bold }
+        pre .atn, code .atn { color: #404 }
+        pre .atv, code .atv { color: #060 }
+      }
+      .sidebar {
+        margin-top: 0;
+        padding-top: 0!important;
+      }
+      .box .main-header {
+        z-index: 1000;
+        position: relative;
+      }
+      .treeview .nav li a:hover,
+      .treeview .nav li a:active {
+        background: transparent;
+      }
+    </style>
+  </head>
+  <body class="skin-blue">
+    <!-- Site wrapper -->
+    <div class="wrapper">
+      
+     <header class="main-header">
+        <!-- Logo -->
+        <a href="index2.html" class="logo"><b>AFW1G14</b></a>
+        <!-- Header Navbar: style can be found in header.less -->
+        <nav class="navbar navbar-static-top" role="navigation">
+          <!-- Sidebar toggle button-->
+          <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+            <span class="sr-only">Toggle navigation</span>
+          </a>
+          <div class="navbar-custom-menu">
+            <ul class="nav navbar-nav">
+             <!-- Linked-in -->
+              <li class="tasks-menu">
+                <a href="https://www.linkedin.com/in/willieaniebiet">
+                  <i class="fa fa-linkedin-square"></i>                  
+                </a>                
+              </li>  
+             <!-- Github-->
+              <li class="dropdown messages-menu">
+                <a href="http://github.com/aniebiet">
+                  <i class="fa fa-github-square"></i>                  
+                </a>               
+              </li>
+              <!-- Facebook-->
+              <li class="dropdown messages-menu">
+                <a href="http://fb.com/aniebiet">
+                  <i class="fa fa-facebook-square"></i>                  
+                </a>               
+              </li>
+              <!-- Twitter -->
+              <li class="dropdown notifications-menu">
+                <a href="http://twitter.com/willydooo">
+                  <i class="fa fa-twitter-square"></i>
+                </a>               
+              </li>
+              <!-- Instagram -->
+              <li class="dropdown tasks-menu">
+                <a href="http://instagram.com/willydooo">
+                  <i class="fa fa-instagram"></i>
+                </a>                
+              </li> 
+              <!-- Home :-) -->
+              <li class="dropdown tasks-menu">
+                <a href="http://aniebiet.com">
+                  <i class="fa fa-globe"></i>
+                </a>                
+              </li>                          
+            </ul>
+          </div>
+        </nav>
+      </header>
+      <!-- Left side column. contains the logo and sidebar -->
+      <aside class="main-sidebar">
+        <!-- sidebar: style can be found in sidebar.less -->
+        <section class="sidebar">
+          <!-- Sidebar user panel -->
+          <div class="user-panel">
+            <div class="pull-left image">
+              <img src="../dist/img/av.jpg" class="img-circle" alt="User Image" />
+            </div>
+            <div class="pull-left info">
+              <p>Aniebiet Willie</p>
+
+              <a href="#"><i class="fa fa-circle text-success"></i> MSc SE</a>
+            </div>
+          </div>          
+          <!-- sidebar menu: : style can be found in sidebar.less -->
+          <ul class="sidebar-menu">
+            <li class="header">MAIN NAVIGATION</li>
+            <li>
+              <a href="../index.html">
+                <i class="fa fa-home"></i> <span>Home</span> 
+              </a>             
+            </li>        
+            
+                     
+            <li class="treeview active">
+              <a href="#">
+                <i class="fa fa-table"></i> <span>Cleaning</span>
+                <i class="fa fa-angle-left pull-right"></i>
+              </a>
+              <ul class="treeview-menu">
+                <li><a href="../pages/cleaning.html#cell-transform"><i class="fa fa-circle-o"></i> Cell transformation</a></li>
+                <li><a href="../pages/cleaning.html#summation-records"><i class="fa fa-circle-o"></i> Summation Records</a></li>
+                <li><a href="../pages/cleaning.html#multiple"><i class="fa fa-circle-o"></i> Multiple Representations</a></li>
+                <li><a href="../pages/cleaning.html#spelling-errors"><i class="fa fa-circle-o"></i> Spelling Errors</a></li>
+                <li><a href="../pages/cleaning.html#duplicates"><i class="fa fa-circle-o"></i> Duplicate Records</a></li>
+                <li><a href="../pages/cleaning.html#value-transform"><i class="fa fa-circle-o"></i> Value Transformation</a></li>
+              </ul>
+            </li> 
+            <li>
+            <a href="../pages/visualisation1.html">
+                <i class="fa fa-th"></i> <span>Parallel Coordinates</span> 
+              </a>
+            </li>
+            <li>
+              <a href="../pages/visualisation2.html">
+                <i class="fa fa-pie-chart"></i> <span>Bubble Chart</span> 
+              </a>
+            </li>
+            <li class="header">---</li>           
+          </ul>
+        </section>
+        <!-- /.sidebar -->
+      </aside>
+      <!-- =============================================== -->
+
+      
+      <!-- Right side column. Contains the navbar and content of the page -->
+      <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+          <h1>
+            Data Cleaning using Open Refine
+            <small>version 2.6</small>
+          </h1>
+          <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Cleaning</li>
+          </ol>
+        </div>
+
+        <!-- Main content -->
+        <div class="content body">
+          <p class='lead'>
+              The dataset provided listed project data available from the US Governments IT Dashboard system. It covered the projected and actual costs and timings of a number of government funded projects in the US. Open Refine 2.6 was used to rid the dataset of errors and manipulate the dataset to make it suitable for the Treemap and Scatterchart Visualizations. 
+            </p>
+          <section id='cell-transform'>          
+            <h2 class='page-header'><span>Cell transformation</span></h2>
+            <div class="row">
+              <div class="col-sm-6">
+                <p class='lead'>
+                  Applying a text facet on the Unique Investment Identifier column provided an overview of the dataset. Some of the data were found to be offset.
+                  To move the erroneously placed cell values to their bona fide columns, a custom text transform was applied to the columns for some flagged rows.
+                  Hence moving values from the Project Id column to the Unique Investment Identifier column, the custom expression <code>cells["Project ID"].value</code> was used. Similar expressions were used on the other erroneous rows.
+                </p>
+              </div>
+              <div class="col-sm-6">
+                  <div id="carousel-generic" class="carousel slide" data-ride="carousel">
+                      <ol class="carousel-indicators">
+                        <li data-target="#carousel-generic" data-slide-to="0" class="active"></li>
+                        <li data-target="#carousel-generic" data-slide-to="1" class=""></li>                        
+                      </ol>
+                      <div class="carousel-inner">
+                        <div class="item active">
+                          <img src="../dist/img/cleaning/01.jpg" alt="First slide">
+                          </div>
+                        <div class="item">
+                          <img src="../dist/img/cleaning/00.jpg" alt="Second slide">
+                        </div>
+                      </div>
+                      <a class="left carousel-control" href="#carousel-generic" data-slide="prev">
+                        <span class="fa fa-angle-left"></span>
+                      </a>
+                      <a class="right carousel-control" href="#carousel-generic" data-slide="next">
+                        <span class="fa fa-angle-right"></span>
+                      </a>
+                    </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================= -->
+          <section id='summation-records'>          
+            <h2 class='page-header'><span>Summation Records</span></h2>
+            <div class="row">
+              <div class="col-sm-6">
+                <p class='lead'>
+                  Still using the text facet on the Unique Investment Identifier, 26 rows had the value "Total", summation records for all the departments. These rows where deleted. Some totally blank rows where also discovered and deleted.
+                </p>
+              </div>
+              <div class="col-sm-6">
+                  <div id="carousel-generic2" class="carousel slide" data-ride="carousel">
+                      <ol class="carousel-indicators">
+                        <li data-target="#carousel-generic2" data-slide-to="0" class="active"></li>
+                        <li data-target="#carousel-generic2" data-slide-to="1" class=""></li>                        
+                      </ol>
+                      <div class="carousel-inner">
+                        <div class="item active">
+                          <img src="../dist/img/cleaning/02a.jpg" alt="First slide">
+                        </div>
+                        <div class="item">
+                          <img src="../dist/img/cleaning/02b.jpg" alt="Second slide">
+                        </div>                       
+                      </div>
+                      <a class="left carousel-control" href="#carousel-generic2" data-slide="prev">
+                        <span class="fa fa-angle-left"></span>
+                      </a>
+                      <a class="right carousel-control" href="#carousel-generic2" data-slide="next">
+                        <span class="fa fa-angle-right"></span>
+                      </a>
+                    </div>
+              </div>
+            </div>
+          </section>
+
+          
+          <!-- ============================================================= -->
+
+          <!-- ============================================================= -->
+          <section id='multiple'>          
+            <h2 class='page-header'><span>Multiple Representations</span></h2>
+            <div class="row">
+              <div class="col-sm-6">
+                <p class="lead">Agency Code had 26 choices while Agency Name had 106 choices when the Text Facet was applied to both columns. Applying the Common Transform, Trim leading and trailing whitespace, reduced the Agency name chcoices to 53. Using the cluster and Edit function, some alternative representations of departments on the Agency Name column were captured and merged.</p>
+              </div>
+              <div class="col-sm-6">
+                  <div id="carousel-generic3" class="carousel slide" data-ride="carousel">
+                      <ol class="carousel-indicators">
+                        <li data-target="#carousel-generic3" data-slide-to="0" class="active"></li>
+                        <li data-target="#carousel-generic3" data-slide-to="1" class=""></li>
+                         <li data-target="#carousel-generic3" data-slide-to="2" class=""></li>
+                        <li data-target="#carousel-generic3" data-slide-to="3" class=""></li> 
+                      </ol>
+                      <div class="carousel-inner">
+                        <div class="item active">
+                          <img src="../dist/img/cleaning/03.jpg" alt="First slide">
+                        </div>  
+                        <div class="item">
+                          <img src="../dist/img/cleaning/03b.jpg" alt="Third slide">
+                        </div>
+                        <div class="item">
+                          <img src="../dist/img/cleaning/03c.jpg" alt="Fourth slide">
+                        </div>                       
+                        <div class="item">
+                          <img src="../dist/img/cleaning/03d.jpg" alt="Fifth slide">
+                        </div>
+                                   
+                      </div>
+                      <a class="left carousel-control" href="#carousel-generic3" data-slide="prev">
+                        <span class="fa fa-angle-left"></span>
+                      </a>
+                      <a class="right carousel-control" href="#carousel-generic3" data-slide="next">
+                        <span class="fa fa-angle-right"></span>
+                      </a>
+                    </div>
+              </div>
+            </div>
+          </section>         
+
+          <!-- ============================================================= -->
+          <section id='spelling-errors'>          
+            <h2 class='page-header'><span>Spelling Errors</span></h2>
+            <div class="row">
+              <div class="col-sm-6">
+                <p class="lead">Mis-spelled agency names were detected by applying the Text Facet to the Agency Code and Agency Name, then viewing corresponding Agency names with respect to the selected Agency code. The Agency names were then corrected and thus reduced to the expected 26.</p>
+              </div>
+              <div class="col-sm-6">
+                  <div id="carousel-generic4" class="carousel slide" data-ride="carousel">
+                      <ol class="carousel-indicators">
+                        <li data-target="#carousel-generic4" data-slide-to="0" class="active"></li>
+                        <li data-target="#carousel-generic4" data-slide-to="1" class=""></li>
+                      </ol>
+                      <div class="carousel-inner">
+                        <div class="item active">
+                          <img src="../dist/img/cleaning/04.jpg" alt="First slide">
+                        </div>  
+                        <div class="item">
+                          <img src="../dist/img/cleaning/04b.jpg" alt="Third slide">
+                        </div>                          
+                      </div>
+                      <a class="left carousel-control" href="#carousel-generic4" data-slide="prev">
+                        <span class="fa fa-angle-left"></span>
+                      </a>
+                      <a class="right carousel-control" href="#carousel-generic4" data-slide="next">
+                        <span class="fa fa-angle-right"></span>
+                      </a>
+                    </div>
+              </div>
+            </div>
+          </section>   
+
+          <!-- ============================================================= -->
+          <section id='duplicates'>          
+            <h2 class='page-header'><span>Duplicate Records</span></h2>
+            <div class="row">
+              <div class="col-sm-6">
+                <p class="lead">Applying the Cluster and Edit function on the Project ID column reveals duplicates. The duplicate records were flagged and removed accordingly.</p>
+              </div>
+              <div class="col-sm-6">
+                  <div id="carousel-generic5" class="carousel slide" data-ride="carousel">
+                      <ol class="carousel-indicators">
+                        <li data-target="#carousel-generic5" data-slide-to="0" class="active"></li>
+                        <li data-target="#carousel-generic5" data-slide-to="1" class=""></li>
+                      </ol>
+                      <div class="carousel-inner">
+                        <div class="item active">
+                          <img src="../dist/img/cleaning/05.jpg" alt="First slide">
+                        </div>  
+                        <div class="item">
+                          <img src="../dist/img/cleaning/00.jpg" alt="Third slide">
+                        </div>                          
+                      </div>
+                      <a class="left carousel-control" href="#carousel-generic5" data-slide="prev">
+                        <span class="fa fa-angle-left"></span>
+                      </a>
+                      <a class="right carousel-control" href="#carousel-generic5" data-slide="next">
+                        <span class="fa fa-angle-right"></span>
+                      </a>
+                    </div>
+              </div>
+            </div>
+          </section> 
+
+          <!-- ============================================================= -->
+          <section id='value-transform'>          
+            <h2 class='page-header'><span>Value Transformation</span></h2>
+            <div class="row">
+              <div class="col-sm-6">
+                <p class='lead'>Applying the common transform, To Number, to the Project ID and Lifecycle cost reveals certain values that are made erroneous by commas and units. The records were flagged and the Custom text transform expression <code>replace(value, ',', '')</code> and <code>replace(value , '($m)', '')</code>  were applied on the Project ID and Lifecycle cost to remove the commas and units respectively</p>
+              </div>
+              <div class="col-sm-6">
+                  <div id="carousel-generic6" class="carousel slide" data-ride="carousel">
+                      <ol class="carousel-indicators">
+                        <li data-target="#carousel-generic6" data-slide-to="0" class="active"></li>
+                        <li data-target="#carousel-generic6" data-slide-to="1" class=""></li>
+                      </ol>
+                      <div class="carousel-inner">
+                        <div class="item active">
+                          <img src="../dist/img/cleaning/06.jpg" alt="First slide">
+                        </div>  
+                        <div class="item">
+                          <img src="../dist/img/cleaning/06b.jpg" alt="Third slide">
+                        </div>                          
+                      </div>
+                      <a class="left carousel-control" href="#carousel-generic6" data-slide="prev">
+                        <span class="fa fa-angle-left"></span>
+                      </a>
+                      <a class="right carousel-control" href="#carousel-generic6" data-slide="next">
+                        <span class="fa fa-angle-right"></span>
+                      </a>
+                    </div>
+              </div>
+            </div>
+          </section>          
+
+          <!-- ============================================================= -->
+           <section id='derived-columns'>          
+            <h2 class='page-header'><span>Derived Columns</span></h2>
+            <div class="row">
+              <div class="col-sm-6">
+                <p class="lead">A Duration column was derived using the <b>Add column based on column</b> function on the Completion Date column. The expression <code>diff(value, cells["Start Date"].value, "hours" )/24</code></p> 
+              </div>
+              <div class="col-sm-6">
+                  <div id="carousel-generic7" class="carousel slide" data-ride="carousel">
+                      <ol class="carousel-indicators">
+                        <li data-target="#carousel-generic7" data-slide-to="0" class="active"></li>
+                        <li data-target="#carousel-generic7" data-slide-to="1" class=""></li>
+                      </ol>
+                      <div class="carousel-inner">
+                        <div class="item active">
+                          <img src="../dist/img/cleaning/07.jpg" alt="First slide">
+                        </div>  
+                        <div class="item">
+                          <img src="../dist/img/cleaning/07b.jpg" alt="Third slide">
+                        </div>                          
+                      </div>
+                      <a class="left carousel-control" href="#carousel-generic7" data-slide="prev">
+                        <span class="fa fa-angle-left"></span>
+                      </a>
+                      <a class="right carousel-control" href="#carousel-generic7" data-slide="next">
+                        <span class="fa fa-angle-right"></span>
+                      </a>
+                    </div>
+              </div>
+            </div>
+          </section>  
+
+         
+
+        
+        </div><!-- /.content -->
+      </div><!-- /.content-wrapper -->
+
+      <footer class="main-footer">
+        <div class="pull-right hidden-xs">
+          <b>University of Southampton</b>
+        </div>
+        <strong><a href="http://http://www.ecs.soton.ac.uk/">School of Electronics and Computer Science </a></strong> 
+      </footer>
+    </div><!-- ./wrapper -->
+
+    <!-- jQuery 2.1.3 -->
+    <script src="../plugins/jQuery/jQuery-2.1.3.min.js"></script>
+    <!-- Bootstrap 3.3.2 JS -->
+    <script src="../bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+    <!-- SlimScroll -->
+    <script src="../plugins/slimScroll/jquery.slimScroll.min.js" type="text/javascript"></script>
+    <!-- FastClick -->
+    <script src='../plugins/fastclick/fastclick.min.js'></script>
+    <!-- AdminLTE App -->
+    <script src="../dist/js/app.min.js" type="text/javascript"></script>
+
+  </body>
+</html>
